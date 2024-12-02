@@ -97,6 +97,12 @@
           <jvmArguments>
               --add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED
           </jvmArguments>
+          <resources>
+              <resource>
+                  <directory>target/generated-sources/protobuf/java</directory>
+                  <directory>target/generated-sources/protobuf/grpc-java</directory>
+              </resource>
+          </resources>
         </configuration>
 			</plugin>
 			<plugin>
