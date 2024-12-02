@@ -77,6 +77,9 @@ public class Diagnostics extends DiagnosticsImplBase {
                 case "database":
                     conn.setDatabase(value);
                     break;
+                case "type":
+                    conn.setType(value);
+                    break;
             }
         }
         return conn;
