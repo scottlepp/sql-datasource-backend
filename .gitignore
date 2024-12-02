@@ -1,0 +1,6 @@
+target/classes/
+target/maven*
+target/protoc*
+target/surefire*
+target/test-classes/
+target/sql-datasource*
