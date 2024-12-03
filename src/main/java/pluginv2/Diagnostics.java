@@ -58,7 +58,7 @@ public class Diagnostics extends DiagnosticsImplBase {
         Setting[] values = settings.getSettings();
         for (Setting setting : values) {
             String value = setting.getValue();
-            if (setting.getSecure()) {
+            if (setting.getSecure() != null && setting.getSecure()) {
                 value = decrypted.get(setting.getName());
             }
             // typical JDBC connection settings
