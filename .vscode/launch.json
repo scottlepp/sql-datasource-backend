@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-App<sql-datasource>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pluginv2.App",
+            "projectName": "sql-datasource",
+            "vmArgs": "--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

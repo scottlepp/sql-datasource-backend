@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.protobuf.ByteString;
@@ -13,16 +14,16 @@ import com.grafana.backend.CheckHealthResponse.HealthStatus;
 import com.grafana.backend.DataSourceInstanceSettings;
 import com.grafana.backend.DiagnosticsGrpc.DiagnosticsImplBase;
 
-import jdbc.Connection;
-import jdbc.Connector;
 import net.devh.boot.grpc.server.service.GrpcService;
+import pluginv2.jdbc.Connection;
+import pluginv2.jdbc.Connector;
 import settings.Setting;
 import settings.Settings;
 
 @GrpcService
 public class Diagnostics extends DiagnosticsImplBase {
 
-    @Autowired
+    @Autowired @Qualifier("connector")
     private Connector connector;
 
     @Override

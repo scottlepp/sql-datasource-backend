@@ -1,19 +1,21 @@
-package jdbc;
+package pluginv2.jdbc;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.stereotype.Service;
-
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.stereotype.Service;
+
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
-@Service
+@Service()
 public class Connector {
 
     @Autowired

@@ -13,6 +13,10 @@ public class Settings {
 
   private Setting[] settings;
 
+  public Settings() {
+
+  }
+  
   public static Settings Load(ByteString json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = json.toStringUtf8(); 
