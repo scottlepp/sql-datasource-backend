@@ -77,13 +77,19 @@
     <dependency>
 			<groupId>org.apache.arrow</groupId>
 			<artifactId>arrow-vector</artifactId>
-			<version>18.0.0</version>
+			<version>18.1.0</version>
 		</dependency>
 
     <dependency>
         <groupId>org.apache.arrow</groupId>
+        <artifactId>arrow-jdbc</artifactId>
+        <version>18.1.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.arrow</groupId>
         <artifactId>arrow-memory-netty</artifactId>
-        <version>18.0.0</version>
+        <version>18.1.0</version>
         <scope>runtime</scope>
     </dependency>
 
@@ -96,7 +102,6 @@
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-jdbc</artifactId>
-        <scope>runtime</scope>
     </dependency>
 
     <dependency>

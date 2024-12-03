@@ -31,7 +31,10 @@ The jar will be built under the `target` folder.
 
 This jar can be copied to the pkg folder of the sql-datasource.
 
-#### Run locally ( testing )
+#### Debug locally ( testing )
+Use the vscode launch config:  `Spring Boot-App<sql-datasource>`
+
+#### Run locally ( testing ) using MAVEN extension
 
 MAVEN > sql-datasource > Plugins > spring-boot > run
 
