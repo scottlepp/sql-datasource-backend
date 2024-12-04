@@ -251,7 +251,7 @@ public class QueryData extends DataImplBase {
 	static class CustomJdbcConsumerFactory implements JdbcConsumerFactory {
 
 		@Override
-		public JdbcConsumer apply(
+		public JdbcConsumer<?> apply(
 				ArrowType arrowType,
 				int columnIndex,
 				boolean nullable,
