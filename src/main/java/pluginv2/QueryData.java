@@ -265,11 +265,12 @@ public class QueryData extends DataImplBase {
 
 					@Override
 					public void consume(ResultSet resultSet) throws SQLException {
-						Timestamp milliseconds = resultSet.getTimestamp(columnIndex);
+						Timestamp timestamp = resultSet.getTimestamp(columnIndex);
 						int currentIndex = timeStampVector.getValueCount();
 						if (!resultSet.wasNull()) {
 							// Convert milliseconds to nanoseconds
-							long nanoseconds = milliseconds.getTime() * 1_000_000L;
+							// long nanoseconds = milliseconds.getTime() * 1_000_000L;
+							long nanoseconds = timestamp.getTime() * 1_000_000L + timestamp.getNanos() % 1_000_000L;
 
 							// Set the value at the current value count position
 							timeStampVector.setSafe(currentIndex, nanoseconds);
