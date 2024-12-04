@@ -1,3 +1,4 @@
+## Running DB2 in docker
 ```
 docker compose up
 ```
