@@ -88,7 +88,6 @@ public class QueryData extends DataImplBase {
 	}
 
 	private ByteString toDataFrame(JdbcToArrowConfig config, ResultSet resultSet) throws IOException, SQLException {
-		ByteString frames;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try (
 			ArrowVectorIterator iterator = JdbcToArrow.sqlToArrowVectorIterator(resultSet, config)) {
@@ -121,10 +120,9 @@ public class QueryData extends DataImplBase {
 				root.close();
 			}
 
-			frames = ByteString.copyFrom(out.toByteArray());
+			return ByteString.copyFrom(out.toByteArray());
 		} finally {
 			out.close();
 		}
-		return frames;
 	}
 }
