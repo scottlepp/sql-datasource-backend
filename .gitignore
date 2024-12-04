@@ -4,3 +4,7 @@ target/protoc*
 target/surefire*
 target/test-classes/
 target/sql-datasource*
+
+db2-community/database/*
+db2-community/db2_data/*
+db2-community/tmp/*

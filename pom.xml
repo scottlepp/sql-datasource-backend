@@ -110,14 +110,17 @@
         <scope>runtime</scope>
     </dependency>
 
-    <!-- <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency> -->
-
+    <!--  mysql driver -->
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
+    </dependency>
+
+    <!--  db2 driver -->
+    <dependency>
+      <groupId>com.ibm.db2.jcc</groupId>
+      <artifactId>db2jcc</artifactId>
+      <version>db2jcc4</version>
     </dependency>
 
   </dependencies>
