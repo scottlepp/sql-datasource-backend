@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import static java.util.Arrays.asList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.arrow.adapter.jdbc.ArrowVectorIterator;
@@ -28,12 +30,11 @@ import org.apache.arrow.vector.TimeStampVector;
 import org.apache.arrow.vector.VarCharVector;
 import org.apache.arrow.vector.VectorSchemaRoot;
 import org.apache.arrow.vector.ipc.ArrowFileWriter;
+import org.apache.arrow.vector.types.TimeUnit;
 import org.apache.arrow.vector.types.pojo.ArrowType;
 import org.apache.arrow.vector.types.pojo.Field;
 import org.apache.arrow.vector.types.pojo.FieldType;
 import org.apache.arrow.vector.types.pojo.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,7 +53,7 @@ import pluginv2.query.Query;
 @GrpcService
 public class QueryData extends DataImplBase {
 
-	private static final Logger logger = LoggerFactory.getLogger(QueryData.class);
+	// private static final Logger logger = LoggerFactory.getLogger(QueryData.class);
 
 	@Autowired
 	private Connector connector;
@@ -247,58 +248,83 @@ public class QueryData extends DataImplBase {
 	/**
 	 * Custom JdbcConsumerFactory implementation to handle TIMESTAMP columns with custom logic.
 	 * Grafana expects timestamps in nanoseconds, but the default implementation uses milliseconds.
-	 */
-	static class CustomJdbcConsumerFactory implements JdbcConsumerFactory {
+     */
+    static class CustomJdbcConsumerFactory implements JdbcConsumerFactory {
 
-		@Override
-		public JdbcConsumer<?> apply(
-				ArrowType arrowType,
-				int columnIndex,
-				boolean nullable,
-				FieldVector vector,
-				JdbcToArrowConfig config) {
+        // Registry that maps ArrowType to JdbcConsumerFactory
+        private static final Map<ArrowType, JdbcConsumerFactory> consumerFactoryMap = new HashMap<>();
 
-			// Handle TIMESTAMP columns with custom logic
-			if (arrowType instanceof ArrowType.Timestamp) {
-				return new JdbcConsumer<TimeStampVector>() {
-					private final TimeStampVector timeStampVector = (TimeStampVector) vector;
+        static {
+			// Register consumers for different ArrowType
+			consumerFactoryMap.put(
+                new ArrowType.Timestamp(TimeUnit.MILLISECOND, null), 
+				(arrowType, columnIndex, nullable, vector, config) ->
+					new TimestampJdbcConsumer(columnIndex, (TimeStampVector) vector)
+            );
 
-					@Override
-					public void consume(ResultSet resultSet) throws SQLException {
-						Timestamp timestamp = resultSet.getTimestamp(columnIndex);
-						int currentIndex = timeStampVector.getValueCount();
-						if (!resultSet.wasNull()) {
-							// Convert milliseconds to nanoseconds
-							// long nanoseconds = milliseconds.getTime() * 1_000_000L;
-							long nanoseconds = timestamp.getTime() * 1_000_000L + timestamp.getNanos() % 1_000_000L;
+            // You can add more ArrowType mappings here if needed
+            // consumerFactoryMap.put(new ArrowType.Int(32, true), (columnIndex, nullable, vector, config) -> new IntJdbcConsumer(columnIndex, (IntVector) vector));
+        }
 
-							// Set the value at the current value count position
-							timeStampVector.setSafe(currentIndex, nanoseconds);
+        @Override
+        public JdbcConsumer<?> apply(
+                ArrowType arrowType,
+                int columnIndex,
+                boolean nullable,
+                FieldVector vector,
+                JdbcToArrowConfig config) {
 
-							// Increment the value count to reflect the new value added
-							timeStampVector.setValueCount(currentIndex + 1);
-						} else {
-							// TODO: not sure if timestamps are all nullable
-							timeStampVector.setNull(timeStampVector.getValueCount());
-							// Increment the value count to reflect the new value added
-							timeStampVector.setValueCount(currentIndex + 1);
-						}
-					}
+            // Look up the consumer factory for the given ArrowType in the registry
+            JdbcConsumerFactory consumerFactory = consumerFactoryMap.get(arrowType);
 
-					@Override
-					public void resetValueVector(TimeStampVector vector) {
-						timeStampVector.clear();
-					}
+            if (consumerFactory != null) {
+                return consumerFactory.apply(arrowType, columnIndex, nullable, vector, config);
+            }
 
-					@Override
-					public void close() {
-						timeStampVector.close();
-					}
-				};
-			}
+            // Fallback: Use the default consumer for unsupported types
+            return JdbcToArrowUtils.getConsumer(arrowType, columnIndex, nullable, vector, config);
+        }
+    }
 
-			// Fallback: Use the default consumer for other types
-			return JdbcToArrowUtils.getConsumer(arrowType, columnIndex, nullable, vector, config);
-		}
-	}
+	/**
+     * Timestamp-specific JdbcConsumer.
+     */
+    static class TimestampJdbcConsumer implements JdbcConsumer<TimeStampVector> {
+
+        private final int columnIndex;
+        private final TimeStampVector timeStampVector;
+
+        public TimestampJdbcConsumer(int columnIndex, TimeStampVector timeStampVector) {
+            this.columnIndex = columnIndex;
+            this.timeStampVector = timeStampVector;
+        }
+
+        @Override
+        public void consume(ResultSet resultSet) throws SQLException {
+            Timestamp timestamp = resultSet.getTimestamp(columnIndex);
+            if (timestamp != null) {
+                // Convert milliseconds to nanoseconds
+                long nanoseconds = timestamp.getTime() * 1_000_000L + timestamp.getNanos() % 1_000_000L;
+
+                // Set the value at the current value count position
+                int currentIndex = timeStampVector.getValueCount();
+                timeStampVector.setSafe(currentIndex, nanoseconds);
+
+                // Increment the value count to reflect the new value added
+                timeStampVector.setValueCount(currentIndex + 1);
+            } else {
+                timeStampVector.setNull(timeStampVector.getValueCount());
+            }
+        }
+
+        @Override
+        public void resetValueVector(TimeStampVector vector) {
+            timeStampVector.clear();
+        }
+
+        @Override
+        public void close() {
+            timeStampVector.close();
+        }
+    }
 }
