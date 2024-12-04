@@ -78,7 +78,7 @@ public class QueryData extends DataImplBase {
 					.build();
 
 			PreparedStatement statement = connection.prepareStatement(q.getRawSql());
-			ResultSet resultSet = statement.executeQuery(q.getRawSql());
+			ResultSet resultSet = statement.executeQuery();
 
 			return toDataFrame(config, resultSet);
 		} catch (Exception e) {
