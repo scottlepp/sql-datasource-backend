@@ -100,12 +100,6 @@ public class QueryData extends DataImplBase {
 			resultSet.close();
 			return frame;
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw e;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 			// throw e;
