@@ -22,9 +22,9 @@ public class Connector {
     private DatabaseLookup databaseLookup;
     private DataSource dataSource;
 
-    public void connect(Connection conn) throws SQLException {
+    public java.sql.Connection connect(Connection conn) throws SQLException {
         dataSource = init(conn);
-        dataSource.getConnection();
+        return dataSource.getConnection();
     }
 
     private DataSource init(Connection conn) {

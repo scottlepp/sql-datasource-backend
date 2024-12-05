@@ -24,13 +24,13 @@ import com.google.protobuf.ByteString;
 import com.grafana.backend.DataGrpc.DataImplBase;
 import com.grafana.backend.DataQuery;
 import com.grafana.backend.DataResponse;
+import com.grafana.backend.DataSourceInstanceSettings;
 import com.grafana.backend.QueryDataRequest;
 import com.grafana.backend.QueryDataResponse;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import pluginv2.converters.JDBCConfig;
-import pluginv2.jdbc.Connector;
 import pluginv2.query.Query;
 
 @GrpcService
@@ -39,43 +39,65 @@ public class QueryData extends DataImplBase {
 	private static final Logger logger = LoggerFactory.getLogger(QueryData.class);
 
 	@Autowired
-	private Connector connector;
+	private Datasource datasource;
 
 	@Override
 	public void queryData(QueryDataRequest request, StreamObserver<QueryDataResponse> responseObserver) {
-
 		QueryDataResponse.Builder builder = QueryDataResponse.newBuilder();
+		DataSourceInstanceSettings settings = request.getPluginContext().getDataSourceInstanceSettings();
 
-		request.getQueriesList().forEach(query -> {
-			DataResponse.Builder respBuilder = DataResponse.newBuilder();
+		try {
+			Connection conn = datasource.connect(settings);
 			try {
-				ByteString frame = runQuery(query);
-				respBuilder.addFrames(frame);
-			} catch (IOException | SQLException e) {
-				e.printStackTrace();
-				respBuilder.setError(e.getMessage());
+				request.getQueriesList().forEach(query -> {
+					DataResponse.Builder respBuilder = DataResponse.newBuilder();
+					try {
+						ByteString frame = runQuery(conn, query);
+						respBuilder.addFrames(frame);
+					} catch (IOException | SQLException e) {
+						e.printStackTrace();
+						respBuilder.setError(e.getMessage());
+					}
+					DataResponse response = respBuilder.build();
+					builder.putResponses(query.getRefId(), response);
+				});
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
-			DataResponse response = respBuilder.build();
-			builder.putResponses(query.getRefId(), response);
-		});
+	
+			QueryDataResponse response = builder.build();
+			responseObserver.onNext(response);
+			responseObserver.onCompleted();
 
-		QueryDataResponse response = builder.build();
-		responseObserver.onNext(response);
-		responseObserver.onCompleted();
+		} catch (JsonProcessingException | SQLException e) {
+			DataResponse.Builder respBuilder = DataResponse.newBuilder();
+			respBuilder.setError(e.getMessage());
+			DataResponse resp = respBuilder.build();
+			builder.putResponses("error", resp);
+			QueryDataResponse response = builder.build();
+			responseObserver.onNext(response);
+			responseObserver.onCompleted();
+		}
 	}
 
-	private ByteString runQuery(DataQuery query) throws JsonProcessingException, SQLException, IOException {
+	private ByteString runQuery(Connection connection, DataQuery query) throws JsonProcessingException, SQLException, IOException {
 		Query q = Query.Load(query.getJson());
 		logger.info("Running query: " + q.getRawSql());
 
 		ByteString frame = null;
 		try (BufferAllocator allocator = new RootAllocator()) {
-			
-			Connection connection = connector.getDataSource().getConnection();
+
 			PreparedStatement statement = connection.prepareStatement(q.getRawSql());
 			ResultSet resultSet = statement.executeQuery();
 			JdbcToArrowConfig config = JDBCConfig.getConfig(allocator);
 			frame = toDataFrame(config, resultSet);
+			resultSet.close();
 			return frame;
 
 		} catch (SQLException e) {
