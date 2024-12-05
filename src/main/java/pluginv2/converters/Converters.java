@@ -3,6 +3,8 @@ package pluginv2.converters;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import org.apache.arrow.adapter.jdbc.JdbcToArrowUtils;
 import org.apache.arrow.adapter.jdbc.consumer.JdbcConsumer;
 import org.apache.arrow.vector.FieldVector;
 import org.apache.arrow.vector.TimeStampVector;
+import org.apache.arrow.vector.types.DateUnit;
 import org.apache.arrow.vector.types.TimeUnit;
 import org.apache.arrow.vector.types.pojo.ArrowType;
 
@@ -31,6 +34,12 @@ public class Converters {
                 new ArrowType.Timestamp(TimeUnit.MILLISECOND, null), 
 				(arrowType, columnIndex, nullable, vector, config) ->
 					new TimestampJdbcConsumer(columnIndex, (TimeStampVector) vector)
+            );
+
+            consumerFactoryMap.put(
+                new ArrowType.Date(DateUnit.DAY), 
+				(arrowType, columnIndex, nullable, vector, config) ->
+					new DateJdbcConsumer(columnIndex, (TimeStampVector) vector)
             );
 
             // You can add more ArrowType mappings here if needed
@@ -96,6 +105,55 @@ public class Converters {
         @Override
         public void close() {
             timeStampVector.close();
+        }
+    }
+
+    /**
+     * Date-specific JdbcConsumer.
+     */
+    static class DateJdbcConsumer implements JdbcConsumer<TimeStampVector> {
+
+        private final int columnIndex;
+        private final TimeStampVector vector;
+
+        public DateJdbcConsumer(int columnIndex, TimeStampVector dateDayVector) {
+            this.columnIndex = columnIndex;
+            this.vector = dateDayVector;
+        }
+
+        @Override
+        public void consume(ResultSet resultSet) throws SQLException {
+            Instant instant = null;
+            try {
+                Date date = resultSet.getDate(columnIndex);
+                instant = date.toInstant();
+            } catch (SQLException e) {
+                System.out.print("Error: " + e);
+            }
+ 
+            if (instant != null) {
+                // Convert milliseconds to nanoseconds
+                long nanoseconds = instant.getNano();
+
+                // Set the value at the current value count position
+                int currentIndex = vector.getValueCount();
+                vector.setSafe(currentIndex, nanoseconds);
+
+                // Increment the value count to reflect the new value added
+                vector.setValueCount(currentIndex + 1);
+            } else {
+                vector.setNull(vector.getValueCount());
+            }
+        }
+
+        @Override
+        public void resetValueVector(TimeStampVector vector) {
+            vector.clear();
+        }
+
+        @Override
+        public void close() {
+            vector.close();
         }
     }
 }

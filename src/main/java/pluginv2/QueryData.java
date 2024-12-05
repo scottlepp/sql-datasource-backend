@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import org.apache.arrow.adapter.jdbc.ArrowVectorIterator;
 import org.apache.arrow.adapter.jdbc.JdbcToArrow;
 import org.apache.arrow.adapter.jdbc.JdbcToArrowConfig;
-import org.apache.arrow.adapter.jdbc.JdbcToArrowConfigBuilder;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.VectorSchemaRoot;
@@ -30,7 +29,7 @@ import com.grafana.backend.QueryDataResponse;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import pluginv2.converters.Converters;
+import pluginv2.converters.JDBCConfig;
 import pluginv2.jdbc.Connector;
 import pluginv2.query.Query;
 
@@ -67,19 +66,13 @@ public class QueryData extends DataImplBase {
 
 	private ByteString runQuery(DataQuery query) throws JsonProcessingException, SQLException, IOException {
 		Query q = Query.Load(query.getJson());
-		logger.debug("Running query: " + q.getRawSql());
+		logger.info("Running query: " + q.getRawSql());
 
 		try (BufferAllocator allocator = new RootAllocator()) {
 			Connection connection = connector.getDataSource().getConnection();
-
-			JdbcToArrowConfig config = new JdbcToArrowConfigBuilder(allocator, /* calendar= */null)
-					.setReuseVectorSchemaRoot(true)
-					.setJdbcConsumerGetter(new Converters.CustomJdbcConsumerFactory())
-					.build();
-
 			PreparedStatement statement = connection.prepareStatement(q.getRawSql());
 			ResultSet resultSet = statement.executeQuery();
-
+			JdbcToArrowConfig config = JDBCConfig.getConfig(allocator);
 			return toDataFrame(config, resultSet);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,12 +99,26 @@ public class QueryData extends DataImplBase {
 				// Write the first batch
 				writer.writeBatch();
 
+				logger.info("Arrow Schema: \n" + root.getSchema());
+
+				String content = root.contentToTSVString();
+				logger.info("Arrow content: \n" + content);
+
 				// Write the remaining batches
 				while (iterator.hasNext()) {
-					root = iterator.next();
-					root.setRowCount(root.getRowCount()); // Ensure the batch has the correct count
-					writer.writeBatch();
-					root.close(); // Release resources for the batch after writing
+					try {
+						root = iterator.next();
+						root.setRowCount(root.getRowCount()); // Ensure the batch has the correct count
+						writer.writeBatch();
+						root.close(); // Release resources for the batch after writing
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+						e.printStackTrace();
+						// TODO: not sure why this happens but iterator.next() throws an exception
+						// iterator.hasNext not working?
+						break;
+					}
+
 				}
 
 				// Finalize the file
