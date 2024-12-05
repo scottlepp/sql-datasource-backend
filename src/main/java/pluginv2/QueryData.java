@@ -68,16 +68,27 @@ public class QueryData extends DataImplBase {
 		Query q = Query.Load(query.getJson());
 		logger.info("Running query: " + q.getRawSql());
 
+		ByteString frame = null;
 		try (BufferAllocator allocator = new RootAllocator()) {
+			
 			Connection connection = connector.getDataSource().getConnection();
 			PreparedStatement statement = connection.prepareStatement(q.getRawSql());
 			ResultSet resultSet = statement.executeQuery();
 			JdbcToArrowConfig config = JDBCConfig.getConfig(allocator);
-			return toDataFrame(config, resultSet);
-		} catch (Exception e) {
+			frame = toDataFrame(config, resultSet);
+			return frame;
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw e;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			// throw e;
 		}
+		return frame;
 	}
 
 	private ByteString toDataFrame(JdbcToArrowConfig config, ResultSet resultSet) throws IOException, SQLException {
@@ -107,15 +118,11 @@ public class QueryData extends DataImplBase {
 				// Write the remaining batches
 				while (iterator.hasNext()) {
 					try {
-						root = iterator.next();
-						root.setRowCount(root.getRowCount()); // Ensure the batch has the correct count
+						iterator.next();
 						writer.writeBatch();
-						root.close(); // Release resources for the batch after writing
-					} catch (Exception e) {
+					} catch (IOException e) {
 						logger.error(e.getMessage());
 						e.printStackTrace();
-						// TODO: not sure why this happens but iterator.next() throws an exception
-						// iterator.hasNext not working?
 						break;
 					}
 
