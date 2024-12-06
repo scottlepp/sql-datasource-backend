@@ -1,0 +1,87 @@
+[
+    {
+        "name": "ch.qos.logback.classic.Logger",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "ch.qos.logback.classic.LoggerContext",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.classic.spi.LoggingEvent",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.classic.spi.ILoggingEvent",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.core.AppenderBase",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.classic.Level",
+        "fields": [
+          {
+            "name": "levelStr",
+            "type": "java.lang.String"
+          }
+        ]
+    },
+    {
+        "name": "ch.qos.logback.core.ConsoleAppender",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.core.encoder.LayoutWrappingEncoder",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "cch.qos.logback.core.pattern.FormattingConverter",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "ch.qos.logback.core.status.StatusBase",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "org.apache.logging.log4j.spi.ExtendedLoggerWrapper",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "org.apache.logging.log4j.spi.AbstractLogger",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "org.apache.logging.log4j.spi.AbstractLogger.messageFactory",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "io.grpc.netty.shaded.io.netty.util.internal.logging.JdkLogger",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "io.grpc.netty.shaded.io.netty.handler.logging.LogLevel",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    },
+    {
+        "name": "io.grpc.netty.shaded.io.netty.util.internal.logging.InternalLogLevel",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true
+    }
+]
