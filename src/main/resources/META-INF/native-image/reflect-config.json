@@ -83,5 +83,19 @@
         "name": "io.grpc.netty.shaded.io.netty.util.internal.logging.InternalLogLevel",
         "allDeclaredFields": true,
         "allDeclaredMethods": true
+    },
+    {
+        "name": "pluginv2.settings.Settings",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "pluginv2.settings.Setting",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
     }
 ]
