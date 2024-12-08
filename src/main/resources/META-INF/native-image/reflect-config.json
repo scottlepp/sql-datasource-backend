@@ -97,5 +97,75 @@
         "allDeclaredMethods": true,
         "unsafeAllocated": true,
         "allDeclaredConstructors": true
-    }
+    },
+    {
+        "name": "pluginv2.query.Query",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "org.apache.arrow.memory.DefaultAllocationManager",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "org.apache.arrow.memory.netty.NettyAllocationManager",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "pluginv2.converters.JDBCConfig",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": true,
+        "allDeclaredConstructors": true
+    },
+    {
+        "name": "org.apache.arrow.memory.RootAllocator",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+      },
+      {
+        "name": "org.apache.arrow.memory.DefaultAllocationManagerOption",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+      },
+      {
+        "name": "org.apache.arrow.memory.BaseAllocator",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+      },
+      {
+        "name": "io.netty.buffer.AbstractByteBufAllocator",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+      },
+      {
+        "name": "io.netty.util.ResourceLeakDetector",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+      },
+      {
+        "name": "io.netty.util.internal.PlatformDependent",
+        "allDeclaredFields": true,
+        "allDeclaredMethods": true,
+        "unsafeAllocated": false,
+        "allDeclaredConstructors": true
+        }
 ]

@@ -11,8 +11,10 @@ import java.sql.SQLException;
 import org.apache.arrow.adapter.jdbc.ArrowVectorIterator;
 import org.apache.arrow.adapter.jdbc.JdbcToArrow;
 import org.apache.arrow.adapter.jdbc.JdbcToArrowConfig;
+import org.apache.arrow.memory.AllocationManager;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.memory.netty.NettyAllocationManager;
 import org.apache.arrow.vector.VectorSchemaRoot;
 import org.apache.arrow.vector.ipc.ArrowFileWriter;
 import org.slf4j.Logger;
@@ -90,20 +92,24 @@ public class QueryData extends DataImplBase {
 		Query q = Query.Load(query.getJson());
 		logger.info("Running query: " + q.getRawSql());
 
+		BufferAllocator allocator = new RootAllocator();
+		// NettyAllocationManager.FACTORY.create(allocator, Long.MAX_VALUE);
+
 		ByteString frame = null;
-		try (BufferAllocator allocator = new RootAllocator()) {
+		// try (BufferAllocator allocator = new RootAllocator()) {
 
 			PreparedStatement statement = connection.prepareStatement(q.getRawSql());
 			ResultSet resultSet = statement.executeQuery();
 			JdbcToArrowConfig config = JDBCConfig.getConfig(allocator);
 			frame = toDataFrame(config, resultSet);
 			resultSet.close();
-			return frame;
+			// return frame;
+			allocator.close();
 
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-			// throw e;
-		}
+		// } catch (IllegalStateException e) {
+		// 	e.printStackTrace();
+		// 	// throw e;
+		// }
 		return frame;
 	}
 

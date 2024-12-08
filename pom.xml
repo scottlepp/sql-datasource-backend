@@ -150,7 +150,6 @@
         <groupId>org.apache.arrow</groupId>
         <artifactId>arrow-memory-netty</artifactId>
         <version>18.1.0</version>
-        <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -288,6 +287,10 @@
                               <enabled>true</enabled>
                           </agent>
                           <mainClass>${mainClass}</mainClass>
+                            <buildArgs>
+                                <arg>--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED</arg>
+                                <!-- <arg>include-resources=META-INF/services/.*</arg> -->
+                            </buildArgs>
                           <!-- <buildArgs>
                             initialize-at-build-time=ch.qos.logback.classic.Logger,ch.qos.logback.classic.LoggerContext
                           </buildArgs> -->
