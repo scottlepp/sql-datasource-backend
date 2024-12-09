@@ -243,6 +243,8 @@
         <profile>
             <id>native</id>
             <dependencies>
+            <!-- TODO: these are causing problems with the native build so marking as "provided" for now -->
+            <!-- we need looging though so need to figure this out -->
                 <dependency>
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
