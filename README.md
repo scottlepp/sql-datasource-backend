@@ -23,6 +23,16 @@ But wait, don't we need a JRE to run the java app?  No, we can use GraalVM to cr
 
 After installing the extensions you will see a MAVEN option appear on the left nav accordion.
 
+### Install
+
+```
+brew install maven
+```
+
+```
+brew install openjdk
+```
+
 #### Build 
 
 MAVEN > sql-datasource > Lifecycle > install
