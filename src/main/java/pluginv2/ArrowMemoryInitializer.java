@@ -3,9 +3,11 @@ package pluginv2;
 import org.apache.arrow.memory.netty.NettyAllocationManager;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.apache.arrow.memory.BufferAllocator;
-import org.apache.arrow.memory.DefaultAllocationManagerOption;
 import org.apache.arrow.memory.RootAllocator;
 
+// TODO: remove - this was an attempt to fix the issue with Arrow memory allocation
+// by creating a RootAllocator and NettyAllocationManager
+// seeems just setting the env var ARROW_MEMORY_ALLOCATION=true is enough
 @RegisterReflectionForBinding(NettyAllocationManager.class)
 public class ArrowMemoryInitializer {
     public static BufferAllocator initialize() {
@@ -16,14 +18,5 @@ public class ArrowMemoryInitializer {
         System.out.println("Created RootAllocator");
         return allocator;
     }
-
-    // public static void initializeAllocator() {
-    //     DefaultAllocationManagerOption.FACTORY = NettyAllocationManager.FACTORY;
-    //     // Ensure that the DefaultAllocationManagerOption is available
-    //     if (DefaultAllocationManagerOption.getDefaultAllocationManagerFactory() == null) {
-    //         // Use NettyAllocationManager explicitly or set a custom memory manager
-    //         DefaultAllocationManagerOption.setDefaultAllocationManagerFactory(new NettyAllocationManager.Factory());
-    //     }
-    // }
 }
 
