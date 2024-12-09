@@ -2,13 +2,11 @@ package pluginv2.settings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-// import org.springframework.aot.hint.annotation.Reflective;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 
-// @Reflective
 public class Settings {
 
   private static final Logger logger = LoggerFactory.getLogger(Settings.class);
