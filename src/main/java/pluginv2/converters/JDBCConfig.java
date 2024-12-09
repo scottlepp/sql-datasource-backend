@@ -11,6 +11,9 @@ import org.apache.arrow.vector.types.TimeUnit;
 import org.apache.arrow.vector.types.pojo.ArrowType;
 
 public class JDBCConfig {
+    public JDBCConfig() {
+        
+    }
     public static JdbcToArrowConfig getConfig(BufferAllocator allocator) {
         JdbcToArrowConfig config = new JdbcToArrowConfigBuilder(allocator, /* calendar= */null)
                 .setReuseVectorSchemaRoot(true)

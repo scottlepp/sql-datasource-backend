@@ -43,3 +43,17 @@ You can use Postman etc to test the grpc calls.
 Example: [Postman](https://sql-datasource.postman.co/workspace/sql-datasource~3828ec51-8c66-4349-9973-a15ffe8ec9b7/collection/6744d3e91b8ea0b69345acb2?action=share&creator=24818991)
 
 You can also call/test this directly from the sql-datasource plugin.
+
+## Native
+
+#### Build Native
+The pom contains a `native` profile.  Run `mvn install` with that profile ( see below ). You can also select a profile `Maven > Profiles > native` and run this from the VSCode `Maven > sql-datasource > Lifecycle > install` menu.
+```
+mvn install -Dnative-image.args="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED" -P native
+```
+
+#### Run Native
+```
+export ARROW_ALLOCATION_MANAGER_TYPE=Netty
+./target/sql-datasource
+```

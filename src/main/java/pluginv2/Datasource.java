@@ -12,8 +12,8 @@ import com.grafana.backend.DataSourceInstanceSettings;
 
 import pluginv2.jdbc.Connection;
 import pluginv2.jdbc.Connector;
-import settings.Setting;
-import settings.Settings;
+import pluginv2.settings.Setting;
+import pluginv2.settings.Settings;
 
 @Service()
 public class Datasource {

@@ -4,6 +4,9 @@ target/protoc*
 target/surefire*
 target/test-classes/
 target/sql-datasource*
+target/graalvm*
+target/native/
+target/spring-aot/
 
 db2-community/database/*
 db2-community/db2_data/*
