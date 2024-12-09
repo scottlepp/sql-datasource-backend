@@ -28,15 +28,6 @@
     <mainClass>pluginv2.App</mainClass>
 	</properties>
 
-    <!-- <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-            </dependency>
-        </dependencies>
-    </dependencyManagement> -->
-
   <dependencies>
 
 <dependency>
@@ -82,12 +73,6 @@
       <artifactId>grpc-spring-boot-starter</artifactId>
       <version>3.1.0.RELEASE</version>
     </dependency>
-
-    <!-- <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-netty-shaded</artifactId>
-        <version>1.68.1</version>
-    </dependency> -->
 
     <dependency>
         <groupId>io.grpc</groupId>
@@ -291,9 +276,6 @@
                                 <arg>--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED</arg>
                                 <!-- <arg>include-resources=META-INF/services/.*</arg> -->
                             </buildArgs>
-                          <!-- <buildArgs>
-                            initialize-at-build-time=ch.qos.logback.classic.Logger,ch.qos.logback.classic.LoggerContext
-                          </buildArgs> -->
                         </configuration>
                     </plugin>
                     <plugin>
